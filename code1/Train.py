@@ -1,5 +1,6 @@
 # author is He Zhao
 # The time to create is 10:23 AM, 29/11/16
+# Modified by Reyhansyah
 
 import tensorflow as tf
 from tensorflow.python.training import training_util
@@ -31,30 +32,30 @@ style_flag = 'drive'
 styleNum = 0
 
 # ============================== model set ========================================== #
-model = 'test'
+# model = 'test'
 
-result_dir = 'Model_and_Result' + '/' + model + ''
-sample_directory = result_dir + '/figs'
-sample_directory2 = result_dir + '/figs_mask'
-# Directory to save sample images from generator in.
-model_directory = result_dir + '/models'  # Directory to save trained model to.
+# result_dir = 'Model_and_Result' + '/' + model + ''
+# sample_directory = result_dir + '/figs'
+# sample_directory2 = result_dir + '/figs_mask'
+# # Directory to save sample images from generator in.
+# model_directory = result_dir + '/models'  # Directory to save trained model to.
 
-if tf.gfile.Exists(result_dir):
-    tf.gfile.DeleteRecursively(result_dir)
-if not os.path.exists(sample_directory):
-    os.makedirs(sample_directory)
-if not os.path.exists(sample_directory2):
-    os.makedirs(sample_directory2)
-if not os.path.exists(model_directory):
-    os.makedirs(model_directory)
+# if tf.gfile.Exists(result_dir):
+#     tf.gfile.DeleteRecursively(result_dir)
+# if not os.path.exists(sample_directory):
+#     os.makedirs(sample_directory)
+# if not os.path.exists(sample_directory2):
+#     os.makedirs(sample_directory2)
+# if not os.path.exists(model_directory):
+#     os.makedirs(model_directory)
 
-os.system('cp {} {}'.format(__file__, result_dir))
-os.system('cp {} {}'.format('Net.py', result_dir))
-os.system('cp {} {}'.format('Opts.py', result_dir))
-os.system('cp {} {}'.format('StyleFeature.py', result_dir))
+# os.system('cp {} {}'.format(__file__, result_dir))
+# os.system('cp {} {}'.format('Net.py', result_dir))
+# os.system('cp {} {}'.format('Opts.py', result_dir))
+# os.system('cp {} {}'.format('StyleFeature.py', result_dir))
 
-with open(model_directory + '/training_log.txt', 'w') as f:
-    f.close()
+# with open(model_directory + '/training_log.txt', 'w') as f:
+#     f.close()
 # ============================== parameters set ========================================== #
 
 
@@ -94,7 +95,8 @@ mask = tf.placeholder(shape=[None, img_size, img_size, 1], dtype=tf.float32)
 style = tf.placeholder(shape=[None, style_size, style_size, 3],dtype=tf.float32)
 z = tf.placeholder(shape=[None, z_size], dtype=tf.float32)
 
-gt_mask = tf.concat(3, [gt, mask])
+# gt_mask = tf.concat(3, [gt, mask])
+gt_mask = tf.concat([gt, mask],3)
 
 syn = generator(gt_mask, z)
 
@@ -224,10 +226,10 @@ if load_model:
     ckpt = tf.train.get_checkpoint_state('Model_and_Result/' + load_model + '/models')
     saver.restore(sess, ckpt.model_checkpoint_path)
     # saver.save(sess, model_directory + '/model-' + str(0) + '.cptk')
-    print "load saved model and SAVE"
+    print ("load saved model and SAVE")
 elif save_model:
     saver.save(sess, model_directory + '/model-' + str(0) + '.cptk')
-    print "Saved begining Model "
+    print ("Saved begining Model ")
 
 # ==================================== start training ===================================== #
 stime=time.time()
@@ -274,12 +276,10 @@ for epoch in xrange(max_epoch):
 
             _, gLoss, advL, styleL, contL, tvL = sess.run([g_optimizer, g_loss, g_loss_adversarial, g_loss_style, g_loss_content, g_loss_tv], feed_dict=feed_dict) 
             
-            print "[Epoch: %2d / %2d] [%4d]Gen Loss: %.4f Disc Loss: %.4f, style: %.4f, content: %.4f, adv: %.4f, tv: %.4f" \
+            print ("[Epoch: %2d / %2d] [%4d]Gen Loss: %.4f Disc Loss: %.4f, style: %.4f, content: %.4f, adv: %.4f, tv: %.4f") \
                   % (epoch, max_epoch, batchNum, gLoss, dLoss, styleL, contL, advL, tvL)
             with open(model_directory + '/training_log.txt', 'a') as text_file:
-                text_file.write(
-                    "[Epoch: %2d / %2d] [%4d]Gen Loss: %.4f Disc Loss: %.4f, style: %.4f, content: %.4f, adv: %.4f, tv: %.4f \n"
-                    % (epoch, max_epoch, batchNum, gLoss, dLoss, styleL, contL, advL, tvL))
+                text_file.write("[Epoch: %2d / %2d] [%4d]Gen Loss: %.4f Disc Loss: %.4f, style: %.4f, content: %.4f, adv: %.4f, tv: %.4f \n"% (epoch, max_epoch, batchNum, gLoss, dLoss, styleL, contL, advL, tvL))
             batchNum += 1
             if training_util.global_step(sess, global_step) % 100 == 0:
 
@@ -339,8 +339,8 @@ for epoch in xrange(max_epoch):
                             [int(np.sqrt(sample_batch)), int(np.sqrt(sample_batch))],
                             sample_directory2 + '/fig' + str(training_util.global_step(sess, global_step)) + '.png')
 
-                print "[Sample (global_step = %d)] real: %.4f fake: %.4f" \
-                      % (training_util.global_step(sess, global_step), np.mean(dLreal_val), np.mean(dLfake_val))
+                print ("[Sample (global_step = %d)] real: %.4f fake: %.4f" \
+                      % (training_util.global_step(sess, global_step), np.mean(dLreal_val), np.mean(dLfake_val)))
                 with open(model_directory + '/training_log.txt', 'a') as text_file:
                     text_file.write("[Sample (global_step = %d)] real: %.4f fake: %.4f \n"
                                     % (training_util.global_step(sess, global_step), np.mean(dLreal_val),
@@ -349,12 +349,11 @@ for epoch in xrange(max_epoch):
             if training_util.global_step(sess, global_step) % 1000 == 0:
                 saver.save(sess,
                            model_directory + '/model-' + str(training_util.global_step(sess, global_step)) + '.cptk')
-                print "Saved Model %d, time: %.4f" % (training_util.global_step(sess, global_step), time.time()-stime)
+                print ("Saved Model %d, time: %.4f" % (training_util.global_step(sess, global_step), time.time()-stime))
 
              
 
 saver.save(sess, model_directory + '/model-' + str(training_util.global_step(sess, global_step)) + '.cptk')
-print "Saved Model %d, time: %.4f" % (training_util.global_step(sess, global_step), time.time()-stime)
+print ("Saved Model %d, time: %.4f" % (training_util.global_step(sess, global_step), time.time()-stime))
 
 sess.close()
-
