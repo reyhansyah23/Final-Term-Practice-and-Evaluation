@@ -1,5 +1,6 @@
 # author is He Zhao
 # The time to create is 8:49 PM, 28/11/16
+# Modified by Reyhansyah
 
 import tensorflow as tf
 import numpy as np
