@@ -1,5 +1,6 @@
 # author is He Zhao
 # The time to create is 8:47 PM, 28/11/16
+# Modified by Reyhansyah
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
