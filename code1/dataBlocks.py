@@ -1,5 +1,6 @@
 # author is He Zhao
 # The time to create is 2:18 PM, 7/12/16
+# Modified by Reyhansyah
 
 import numpy as np
 from multiprocessing import Process, Queue
