@@ -1,4 +1,5 @@
 # Copyright (c) 2015-2016 Anish Athalye. Released under GPLv3.
+# Modified by Reyhansyah
 
 import tensorflow as tf
 import numpy as np
@@ -23,7 +24,7 @@ def net(data, input_image):
         'relu5_3', 'conv5_4', 'relu5_4'
     )
 
-    #data = scipy.io.loadmat(data_path)
+    data = scipy.io.loadmat(data_path)
     mean = data['normalization'][0][0][0]
     mean_pixel = np.mean(mean, axis=(0, 1))
     weights = data['layers'][0]
