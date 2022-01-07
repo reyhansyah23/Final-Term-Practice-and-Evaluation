@@ -1,5 +1,7 @@
 # author is He Zhao
 # The time to create is 3:40 PM, 23/3/17
+# Modified by Reyhansyah
+
 import tensorflow as tf
 import vgg
 import numpy as np
@@ -10,8 +12,11 @@ STYLE_LAYERS = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 CONTENT_LAYER = ('relu4_2',)
 
 
-vgg_path = 'imagenet-vgg-verydeep-19.mat'
-data = sio.loadmat(vgg_path)
+# vgg_path = 'imagenet-vgg-verydeep-19.mat'
+vgg_path = "/content/drive/My Drive/UAS/2D_Neuron_dataset/NeuB2/Color_GT/39_color.tif"
+img = Image.open(vgg_path).convert('L').resize((28, 28), Image.ANTIALIAS)
+img = np.array(img)
+data = img
 
 def get_style_features(image, mask):
 
@@ -102,5 +107,3 @@ def get_tv_loss(img, mask):
     y = tf.reduce_mean(tf.abs(img[:, :, 1:, :] - img[:, :, :-1, :]))
 
     return x+y
-    
-
